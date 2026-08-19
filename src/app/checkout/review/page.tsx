@@ -1,10 +1,16 @@
 "use client";
 
+import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
-import { ArrowRight, CreditCard, User, Phone, MapPin } from "lucide-react";
+import {
+  ArrowRight,
+  CreditCard,
+  User,
+  Phone,
+  MapPin,
+} from "lucide-react";
 
-export default function PaymentReviewPage() {
+function PaymentReviewContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -34,6 +40,7 @@ export default function PaymentReviewPage() {
           <p className="text-[#C9A25D] text-xs tracking-[0.25em] uppercase mb-2">
             Review Payment
           </p>
+
           <h1 className="font-display text-3xl text-[#2B2320]">
             Confirm Your Payment
           </h1>
@@ -42,10 +49,14 @@ export default function PaymentReviewPage() {
         <div className="bg-white rounded-3xl border border-[#6B1F3D]/08 shadow-sm overflow-hidden">
           {/* Amount Banner */}
           <div className="bg-[#1A1210] px-8 py-8 text-center">
-            <p className="text-[#FBF6F2]/50 text-sm mb-1">Total Amount</p>
+            <p className="text-[#FBF6F2]/50 text-sm mb-1">
+              Total Amount
+            </p>
+
             <p className="font-display text-4xl text-[#FBF6F2]">
               Rs. {Number(amount).toLocaleString()}
             </p>
+
             {orderNumber && (
               <p className="text-[#C9A25D] text-sm mt-2">
                 Order #{orderNumber}
@@ -59,12 +70,19 @@ export default function PaymentReviewPage() {
               <div className="w-10 h-10 rounded-full bg-[#6B1F3D]/10 flex items-center justify-center text-[#6B1F3D] shrink-0">
                 <User size={18} />
               </div>
+
               <div>
                 <p className="text-xs text-[#2B2320]/40 uppercase tracking-wider">
                   Customer
                 </p>
-                <p className="font-medium">{name || "—"}</p>
-                <p className="text-sm text-[#2B2320]/50">{email}</p>
+
+                <p className="font-medium">
+                  {name || "—"}
+                </p>
+
+                <p className="text-sm text-[#2B2320]/50">
+                  {email}
+                </p>
               </div>
             </div>
 
@@ -72,11 +90,15 @@ export default function PaymentReviewPage() {
               <div className="w-10 h-10 rounded-full bg-[#6B1F3D]/10 flex items-center justify-center text-[#6B1F3D] shrink-0">
                 <Phone size={18} />
               </div>
+
               <div>
                 <p className="text-xs text-[#2B2320]/40 uppercase tracking-wider">
                   Phone
                 </p>
-                <p className="font-medium">{phone || "—"}</p>
+
+                <p className="font-medium">
+                  {phone || "—"}
+                </p>
               </div>
             </div>
 
@@ -84,10 +106,12 @@ export default function PaymentReviewPage() {
               <div className="w-10 h-10 rounded-full bg-[#6B1F3D]/10 flex items-center justify-center text-[#6B1F3D] shrink-0">
                 <MapPin size={18} />
               </div>
+
               <div>
                 <p className="text-xs text-[#2B2320]/40 uppercase tracking-wider">
                   Delivery Address
                 </p>
+
                 <p className="font-medium text-sm leading-relaxed">
                   {address || "—"}
                 </p>
@@ -98,11 +122,15 @@ export default function PaymentReviewPage() {
               <div className="w-10 h-10 rounded-full bg-[#6B1F3D]/10 flex items-center justify-center text-[#6B1F3D] shrink-0">
                 <CreditCard size={18} />
               </div>
+
               <div>
                 <p className="text-xs text-[#2B2320]/40 uppercase tracking-wider">
                   Payment Method
                 </p>
-                <p className="font-medium">Safepay (Card / JazzCash / Easypaisa)</p>
+
+                <p className="font-medium">
+                  Safepay (Card / JazzCash / Easypaisa)
+                </p>
               </div>
             </div>
           </div>
@@ -115,6 +143,7 @@ export default function PaymentReviewPage() {
               className="w-full btn-primary"
             >
               {loading ? "Processing..." : "Confirm & Pay"}
+
               {!loading && <ArrowRight size={16} />}
             </button>
 
@@ -132,5 +161,25 @@ export default function PaymentReviewPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+function LoadingState() {
+  return (
+    <div className="min-h-screen bg-[#FBF6F2] pt-32 pb-20 px-6 flex items-center justify-center">
+      <div className="text-center">
+        <p className="text-[#6B1F3D]">
+          Loading payment details...
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default function PaymentReviewPage() {
+  return (
+    <Suspense fallback={<LoadingState />}>
+      <PaymentReviewContent />
+    </Suspense>
   );
 }
