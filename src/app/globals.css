@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Signature gold divider line */
+.gold-divider {
+  width: 64px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c9a25d, transparent);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(24px, -30px) scale(1.08); }
+  66% { transform: translate(-18px, 18px) scale(0.94); }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+.animate-blob {
+  animation: blob 13s ease-in-out infinite;
+}
+
+.animate-blob-delay {
+  animation: blob 13s ease-in-out infinite;
+  animation-delay: -5s;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.75s ease, transform 0.75s ease;
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float, .animate-blob, .animate-blob-delay { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
