@@ -24,31 +24,28 @@ export default async function AccountPage() {
   const token = cookieStore.get("token")?.value;
   const authUser = token ? verifyToken(token) : null;
 
-  if (!authUser) {
-    redirect("/login");
-  }
+  if (!authUser) redirect("/login");
 
-  const user = await prisma.user.findUnique({
-    where: { id: authUser.id },
-  });
-
-  if (!user) {
-    redirect("/login");
-  }
-
-  const orders = await prisma.order.findMany({
-    where: { userId: authUser.id },
-    include: {
-      items: {
-        include: {
-          product: true,
+  const [user, orders] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: authUser.id },
+    }),
+    prisma.order.findMany({
+      where: { userId: authUser.id },
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
         },
       },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+  ]);
+
+  if (!user) redirect("/login");
 
   return (
     <div className="min-h-screen bg-[#FBF6F2] pt-32 pb-20 px-6 md:px-10">
@@ -64,7 +61,7 @@ export default async function AccountPage() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {/* ---- Profile ---- */}
+          {/* Profile */}
           <div className="bg-white rounded-3xl p-7 h-fit">
             <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#6B1F3D] to-[#C9A25D] flex items-center justify-center text-white font-display text-xl mb-5">
               {user.name.charAt(0)}
@@ -98,7 +95,7 @@ export default async function AccountPage() {
             </a>
           </div>
 
-          {/* ---- Orders ---- */}
+          {/* Orders */}
           <div className="md:col-span-2 bg-white rounded-3xl p-7">
             <h2 className="font-display text-xl mb-6">My Orders</h2>
 
@@ -119,7 +116,7 @@ export default async function AccountPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {orders.map((order) => (
+                {orders.map((order: any) => (
                   <div
                     key={order.id}
                     className="border border-[#6B1F3D]/8 rounded-2xl p-5"
@@ -137,7 +134,8 @@ export default async function AccountPage() {
 
                       <span
                         className={`text-xs px-3 py-1.5 rounded-full font-medium capitalize ${
-                          statusColors[order.status]
+                          statusColors[order.status] ||
+                          "bg-gray-100 text-gray-500"
                         }`}
                       >
                         {order.status}
@@ -145,7 +143,7 @@ export default async function AccountPage() {
                     </div>
 
                     <div className="space-y-1 mb-2">
-                      {order.items.map((item) => (
+                      {order.items.map((item: any) => (
                         <p
                           key={item.id}
                           className="text-xs text-[#2B2320]/60"
